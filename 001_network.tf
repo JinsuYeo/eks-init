@@ -39,6 +39,7 @@ resource "aws_subnet" "ecom-sub-pri01" {
   availability_zone       = "ap-northeast-2a"
   tags = {
     Name = "ecom-sub-pri01"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
 
@@ -48,6 +49,7 @@ resource "aws_subnet" "ecom-sub-pri02" {
   availability_zone = "ap-northeast-2c"
   tags = {
       Name = "ecom-sub-pri02"
+      "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 }
 
