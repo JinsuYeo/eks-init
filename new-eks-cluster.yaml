@@ -2,19 +2,19 @@ apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
 
 metadata:
-  name: dev-ecom-eks-cluster
+  name: eks-cluster
   region: ap-northeast-2
 
 vpc:
-  id: 'vpc-02f306aae21577dd4'
+  id: 'vpc-id'
   cidr: '10.0.0.0/24'
   subnets:
     private:
       dev-ecom-sub-pri01:
-        id: 'subnet-06123259de8e70614'
+        id: 'subnet01-id'
         cidr: '10.0.0.128/26'
       dev-ecom-sub-pri02:
-        id: 'subnet-0278c6b94902bd543'
+        id: 'subnet02-id'
         cidr: '10.0.0.192/26'
 
 fargateProfiles:
