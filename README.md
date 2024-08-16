@@ -1,5 +1,12 @@
 # EKS Fargate
 
+## 시작
+
+aws cli 설치 후 aws configure 설정  
+(모든 리소스 한번에 올리면 콘솔을 통해 확인되지 않는 오류 발생 -> eks.tf 빼고 올린 후, eks.tf 올리면 정상 작동 확인, terraform init --reconfigure 후 올려볼 것)
+
+---
+
 ## 1. VPC, subnet 구성
 
 VPC에 public, private subnet 만들고 igw, nat gateway, routing table 연결
@@ -25,6 +32,7 @@ cli server에서 control plane에 접근 가능하도록 control plane에 securi
 aws eks --region <region-code> update-kubeconfig --name <cluster_name>
 ```
 
+<!--
 2. CoreDNS는 Amazon EKS 클러스터의 Amazon EC2 인프라에서 실행되도록 구성되어 있으나 클러스터에 EC2 인스턴스 없으므로 아래 명령 수행하여 fargate 노드에서만 pod 뜨도록 아래 명령 실행 -> CoreDNS 배포를 즉시 재실행
 
 ```
@@ -32,7 +40,7 @@ kubectl patch deployment coredns \
 -n kube-system \
 --type json \
 -p='[{"op": "remove", "path": "/spec/template/metadata/annotations/eks.amazonaws.com~1compute-type"}]'
-```
+``` -->
 
 ---
 

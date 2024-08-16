@@ -36,10 +36,6 @@ variable "aws_region" {
   default = "ap-northeast-2"
 }
 
-variable "cluster_name" {
-  default = "ecom-eks-cluster"
-}
-
 variable "cluster_version" {
   default = "1.30"
 }

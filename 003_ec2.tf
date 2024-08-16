@@ -31,6 +31,32 @@ output "pem_location" {
 #########################################################################################################
 ## Create ec2 instance for Bastion
 #########################################################################################################
+resource "aws_security_group" "ecom-sg-cli" {
+  name        = "ecom-sg-cli"
+  description = "ecom-sg-cli"
+  vpc_id      = module.vpc.vpc_id
+}
+
+resource "aws_security_group_rule" "allow-https" {
+  from_port         = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.ecom-sg-cli.id
+  to_port           = 443
+  type              = "ingress"
+  description       = "https"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+resource "aws_security_group_rule" "allow-all-ports-egress" {
+  from_port         = 0
+  protocol          = "-1"
+  security_group_id = aws_security_group.ecom-sg-cli.id
+  to_port           = 0
+  type              = "egress"
+  description       = "all ports"
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
 resource "aws_iam_instance_profile" "ec2_cli_profile" {
   name = "ec2_cli_profile_allow_ssm"
   role = aws_iam_role.ecom-role-ec2cli.name
@@ -39,7 +65,7 @@ resource "aws_iam_instance_profile" "ec2_cli_profile" {
 resource "aws_instance" "ecom-ec2-cli" {
   ami           = "ami-0c2acfcb2ac4d02a0"
   instance_type = "t2.micro"
-  subnet_id     = aws_subnet.ecom-sub-pri01.id
+  subnet_id     = module.vpc.private_subnets[0]
 
   iam_instance_profile = aws_iam_instance_profile.ec2_cli_profile.name
   key_name             = aws_key_pair.ecom-kp-cli.key_name
@@ -48,8 +74,11 @@ resource "aws_instance" "ecom-ec2-cli" {
   ]
 
   user_data = <<-EOF
-  #!/bin/bash
-  set -euo pipefail
+  #!/bin/bash -x
+  until ping -c 1 google.com; do
+  echo "Waiting for internet connection..."
+  sleep 5
+  done
   PLATFORM=Linux_amd64
   curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
   curl -sL "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_checksums.txt" | grep $PLATFORM | sha256sum --check
